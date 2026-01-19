@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+        background-color: #f3f4f6;
+        overflow: hidden;
+    }
+    
+    .slide-container {
+        width: 1280px;
+        height: 720px;
+        background-color: #f8fafc;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    /* Top Decorative Bar */
+    .top-bar {
+        height: 8px;
+        width: 100%;
+        background-color: #003B73;
+        display: flex;
+    }
+    .top-bar-accent {
+        width: 15%;
+        height: 100%;
+        background-color: #FFCD00;
+    }
+
+    /* Header Section */
+    .header {
+        padding: 2rem 4rem 1rem 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 1px solid #e2e8f0;
+        background-color: white;
+        flex-shrink: 0;
+    }
+
+    .page-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: 2.5rem;
+        color: #003B73;
+        line-height: 1.1;
+        text-transform: uppercase;
+        position: relative;
+    }
+    
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: -1rem; 
+        left: 0;
+        width: 80px;
+        height: 5px;
+        background-color: #FFCD00;
+    }
+
+    .breadcrumb {
+        font-size: 0.9rem;
+        color: #64748b;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Main Content Area */
+    .content-wrapper {
+        flex: 1;
+        padding: 3rem 4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #f8fafc;
+        position: relative;
+    }
+
+    /* Process Flow Container */
+    .process-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: relative;
+        z-index: 10;
+        margin-top: 1rem;
+    }
+
+    /* Connecting Line */
+    .process-line {
+        position: absolute;
+        top: 60px; /* Aligned with icon center */
+        left: 50px;
+        right: 50px;
+        height: 4px;
+        background-color: #e2e8f0;
+        z-index: 0;
+    }
+    
+    .process-line-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 70%; /* Suggests progress or flow */
+        background-color: #3b82f6; /* Light blue accent */
+        opacity: 0.3;
+    }
+
+    /* Step Card */
+    .step-card {
+        flex: 1;
+        background-color: white;
+        border-radius: 12px;
+        padding: 0 1.5rem 2rem 1.5rem;
+        margin: 0 10px;
+        position: relative;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border-top: 4px solid transparent;
+        transition: transform 0.2s ease;
+        height: 320px; /* Fixed height for uniformity */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .step-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .step-card.primary { border-top-color: #003B73; }
+    .step-card.secondary { border-top-color: #FFCD00; }
+    
+    /* Step Number/Icon Badge */
+    .step-badge {
+        width: 80px;
+        height: 80px;
+        background-color: white;
+        border-radius: 50%;
+        margin: -40px auto 1.5rem auto; /* Overlap top */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border: 4px solid #f8fafc;
+        position: relative;
+        z-index: 2;
+    }
+
+    .step-icon {
+        font-size: 2rem;
+        color: #003B73;
+    }
+
+    .step-number {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #FFCD00;
+        color: #003B73;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+    }
+
+    .step-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        min-height: 2.5rem; /* Ensure alignment */
+    }
+
+    .step-desc {
+        font-size: 0.95rem;
+        color: #64748b;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .step-note {
+        margin-top: auto;
+        font-size: 0.8rem;
+        background-color: #fefce8;
+        color: #854d0e;
+        padding: 0.5rem;
+        border-radius: 6px;
+        border: 1px solid #fef08a;
+    }
+
+    /* Warning Box at Bottom */
+    .warning-box {
+        margin-top: 3rem;
+        background-color: #eff6ff;
+        border-left: 6px solid #003B73;
+        padding: 1.5rem;
+        border-radius: 0 8px 8px 0;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .warning-icon {
+        font-size: 1.5rem;
+        color: #003B73;
+        margin-right: 1.5rem;
+        margin-top: 0.25rem;
+    }
+
+    .warning-content h4 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        color: #003B73;
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+    }
+
+    .warning-content p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #475569;
+    }
+
+</style>
+</head>
+<body>
+<div class="slide-container">
+<!-- Top Decorative Bar -->
+<div class="top-bar">
+<div class="top-bar-accent"></div>
+</div>
+<!-- Header -->
+<div class="header">
+<div>
+<h1 class="page-title">Adesão ao Ambiente HubBI</h1>
+</div>
+<div class="breadcrumb">
+<p><i class="fas fa-clipboard-check mr-2"></i>Fluxo de Solicitação e Configuração</p>
+</div>
+</div>
+<!-- Main Content -->
+<div class="content-wrapper">
+<div class="bg-circle"></div>
+<!-- Process Timeline -->
+<div class="process-container">
+<!-- Connecting Line -->
+<div class="process-line">
+<div class="process-line-fill"></div>
+</div>
+<!-- Step 1 -->
+<div class="step-card primary">
+<div class="step-badge">
+<span class="step-number">1</span>
+<i class="fas fa-file-signature step-icon"></i>
+</div>
+<h3 class="step-title">Formalização</h3>
+<p class="step-desc">
+                    O Gestor Setorial deve formalizar a adesão via <strong>SEI</strong>. É necessário utilizar o modelo de adesão oficial disponível.
+                </p>
+<div class="step-note">
+<i class="fas fa-exclamation-circle mr-1"></i> Apenas Gestor Setorial
+                </div>
+</div>
+<!-- Step 2 -->
+<div class="step-card primary">
+<div class="step-badge">
+<span class="step-number">2</span>
+<i class="fas fa-user-lock step-icon"></i>
+</div>
+<h3 class="step-title">Pré-requisitos</h3>
+<p class="step-desc">
+                    Possuir login (conta e senha) no <strong>SEI</strong> ou e-mail <strong>expresso.pe.go.br</strong>.
+                </p>
+<div class="step-note" style="background-color: #fee2e2; border-color: #fecaca; color: #991b1b;">
+<i class="fas fa-sign-in-alt mr-1"></i> Login obrigatório na plataforma HubBI (1ª vez)
+                </div>
+</div>
+<!-- Step 3 -->
+<div class="step-card primary">
+<div class="step-badge">
+<span class="step-number">3</span>
+<i class="fas fa-user-plus step-icon"></i>
+</div>
+<h3 class="step-title">Permissões</h3>
+<p class="step-desc">
+                    O Gestor Setorial concede a permissão de <strong>Desenvolvedor</strong> diretamente pela interface de administração do portal HubBI.
+                </p>
+</div>
+<!-- Step 4 -->
+<div class="step-card secondary">
+<div class="step-badge">
+<span class="step-number">4</span>
+<i class="fas fa-sitemap step-icon"></i>
+</div>
+<h3 class="step-title">Pós-Adesão</h3>
+<p class="step-desc">
+                    O Gestor define os usuários finais e relatórios, aplicando o <strong>Controle de Acesso Lógico (CAL)</strong>.
+                </p>
+</div>
+</div>
+<!-- Detailed Info Box -->
+<div class="warning-box">
+<i class="fas fa-info-circle warning-icon"></i>
+<div class="warning-content">
+<h4>Atenção aos Requisitos de Conta</h4>
+<p>
+                    Para assumir o papel de <strong>Gestor Setorial</strong> ou <strong>Desenvolvedor</strong>, é mandatório que o usuário tenha realizado login na plataforma HubBI pelo menos uma vez previamente. Isso garante que o perfil de usuário exista na base de dados para atribuição de permissões.
+                </p>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+        background-color: #f3f4f6;
+        overflow: hidden;
+    }
+    
+    .slide-container {
+        width: 1280px;
+        height: 720px; /* keep slide modal at fixed height */
+        background-color: #f8fafc;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* hide overflow; we'll scale content to fit */
+    }
+
+    /* Top Decorative Bar */
+    .top-bar {
+        height: 8px;
+        width: 100%;
+        background-color: #003B73;
+        display: flex;
+    }
+    .top-bar-accent {
+        width: 15%;
+        height: 100%;
+        background-color: #FFCD00;
+    }
+
+    /* Header Section */
+    .header {
+        padding: 2rem 4rem 1rem 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 1px solid #e2e8f0;
+        background-color: white;
+        flex-shrink: 0;
+    }
+
+    .page-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: 2.5rem;
+        color: #003B73;
+        line-height: 1.1;
+        text-transform: uppercase;
+        position: relative;
+    }
+    
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: -1rem; 
+        left: 0;
+        width: 80px;
+        height: 5px;
+        background-color: #FFCD00;
+    }
+
+    .breadcrumb {
+        font-size: 0.9rem;
+        color: #64748b;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Main Content Area */
+    .content-wrapper {
+        flex: 1;
+        padding: 2.5rem 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        background-image: radial-gradient(#cbd5e1 1px, transparent 1px); /* Keep gradient only for dots pattern if allowed, otherwise remove. Prompt says NO gradients in style rules. I will remove it to be safe and use solid color/image */
+        background-color: #f8fafc;
+        position: relative;
+    }
+
+    /* Remove gradient pattern and use a subtle image or plain bg */
+    .bg-pattern {
+        position: absolute;
+        top: 0; 
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #f8fafc;
+        opacity: 0.5;
+        z-index: 0;
+    }
+
+    .cards-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        height: auto; /* let cards push the container height */
+        z-index: 1;
+    }
+
+    /* Profile Cards */
+    .profile-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-top: 6px solid transparent;
+        transition: transform 0.2s ease;
+    }
+
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Card Variations */
+    .card-global { border-color: #0d253f; } /* Darkest Blue */
+    .card-setorial { border-color: #003B73; } /* Brand Blue */
+    .card-dev { border-color: #3b82f6; } /* Light Blue */
+    .card-viewer { border-color: #eab308; } /* Yellow */
+
+    .card-header {
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .role-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        font-size: 1.5rem;
+    }
+
+    /* Icon Backgrounds */
+    .icon-bg-global { background-color: #f1f5f9; color: #0d253f; }
+    .icon-bg-setorial { background-color: #eff6ff; color: #003B73; }
+    .icon-bg-dev { background-color: #dbeafe; color: #3b82f6; }
+    .icon-bg-viewer { background-color: #fef9c3; color: #ca8a04; }
+
+    .role-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+
+    .role-subtitle {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    
+    .sub-global { color: #64748b; }
+    .sub-setorial { color: #003B73; }
+    .sub-dev { color: #3b82f6; }
+    .sub-viewer { color: #ca8a04; }
+
+    .card-body {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .feature-list li {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.8rem;
+        font-size: 0.9rem;
+        color: #475569;
+        line-height: 1.4;
+    }
+
+    .feature-list li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: #cbd5e1;
+        font-size: 1.2rem;
+        line-height: 1rem;
+    }
+    
+    /* Bullet colors */
+    .card-global .feature-list li::before { color: #0d253f; }
+    .card-setorial .feature-list li::before { color: #003B73; }
+    .card-dev .feature-list li::before { color: #3b82f6; }
+    .card-viewer .feature-list li::before { color: #eab308; }
+
+    /* Bottom Note */
+    .footer-note {
+        background-color: #003B73;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        z-index: 1;
+        margin-top: auto; /* Push to bottom */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .note-icon {
+        font-size: 1.2rem;
+        color: #FFCD00;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+</style>
+</head>
+<body>
+<div class="slide-container">
+<!-- Top Decorative Bar -->
+<div class="top-bar">
+<div class="top-bar-accent"></div>
+</div>
+<!-- Header -->
+<div class="header">
+<div>
+<h1 class="page-title">Perfis de Usuário e Funções</h1>
+</div>
+<div class="breadcrumb">
+<p><i class="fas fa-users-cog mr-2"></i>Estrutura de Governança HubBI</p>
+</div>
+</div>
+<!-- Main Content -->
+<div class="content-wrapper">
+<div class="bg-pattern"></div>
+<div class="cards-container">
+<!-- 1. Gestor Global -->
+<div class="profile-card card-global">
+<div class="card-header">
+<div class="role-icon-wrapper icon-bg-global">
+<i class="fas fa-globe-americas"></i>
+</div>
+<h3 class="role-title">Gestor Global (ATI)</h3>
+<p class="role-subtitle sub-global">Administrador</p>
+</div>
+<div class="card-body">
+<ul class="feature-list">
+<li><strong>Gestão Total:</strong> Administrador da infraestrutura e configuração do portal.</li>
+<li><strong>Governança:</strong> Possui todos os privilégios (inclusão, remoção, substituição).</li>
+<li><strong>Criação:</strong> Responsável por criar os gestores setoriais nos órgãos.</li>
+<li><strong>Gerenciamento:</strong> Gere usuários globalmente e propriedades customizadas.</li>
+</ul>
+</div>
+</div>
+<!-- 2. Gestor Setorial -->
+<div class="profile-card card-setorial">
+<div class="card-header">
+<div class="role-icon-wrapper icon-bg-setorial">
+<i class="fas fa-building-user"></i>
+</div>
+<h3 class="role-title">Gestor Setorial</h3>
+<p class="role-subtitle sub-setorial">Controlador</p>
+</div>
+<div class="card-body">
+<ul class="feature-list">
+
+<li><strong>Acessos (CAL):</strong> Define usuários, acessos a pastas e relatórios.</li>
+<li><strong>Gestão de BIs:</strong> Visualiza BIs do órgão, cria e publica aplicativos.</li>
+<li><strong>Permissões:</strong> Concede permissões relacionadas ao seu setor.</li>
+</ul>
+</div>
+</div>
+<!-- 3. Desenvolvedor -->
+<div class="profile-card card-dev">
+<div class="card-header">
+<div class="role-icon-wrapper icon-bg-dev">
+<i class="fas fa-laptop-code"></i>
+</div>
+<h3 class="role-title">Desenvolvedor</h3>
+<p class="role-subtitle sub-dev">Criador</p>
+</div>
+<div class="card-body">
+<ul class="feature-list">
+<li><strong>Desenvolvimento:</strong> Responsável por criar relatórios e painéis.</li>
+
+<li><strong>Edição:</strong> Edita aplicativos designados ao seu usuário.</li>
+<li><strong>Publicação:</strong> Envia aplicativos para revisão do Gestor Setorial.</li>
+</ul>
+</div>
+</div>
+<!-- 4. Visualizador -->
+<div class="profile-card card-viewer">
+<div class="card-header">
+<div class="role-icon-wrapper icon-bg-viewer">
+<i class="fas fa-eye"></i>
+</div>
+<h3 class="role-title">Visualizador</h3>
+<p class="role-subtitle sub-viewer">Usuário Final</p>
+</div>
+<div class="card-body">
+<ul class="feature-list">
+<li><strong>Consumo:</strong> Usuário final dos relatórios e dashboards.</li>
+<li><strong>Acesso Público:</strong> Visualiza aplicativos publicados como públicos.</li>
+<li><strong>Acesso Setorial:</strong> Acessa aplicativos permitidos explicitamente para sua instituição.</li>
+<li>Sem permissão de edição ou gestão.</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Footer Note -->
+<div class="footer-note">
+<i class="fas fa-info-circle note-icon"></i>
+<p>
+<strong>Nota Técnica:</strong> As funções na HubBI são atribuições a <strong>nível de componente</strong> (relatórios, pastas, gráficos e filtros), controlando o acesso e a visibilidade na hierarquia de pastas do servidor.
+            </p>
+</div>
+</div>
+</div>
+
+<script>
+    // Scale inner content to fit slide height (720px) so footer-note is visible without scrollbar
+    (function(){
+        const container = document.querySelector('.slide-container');
+        const content = document.querySelector('.content-wrapper');
+        if(!container || !content) return;
+
+        function fit(){
+            // compute available height inside container (exclude top bar and header)
+            const header = document.querySelector('.header');
+            const topBar = document.querySelector('.top-bar');
+            const used = (header ? header.getBoundingClientRect().height : 0) + (topBar ? topBar.getBoundingClientRect().height : 0) + 32; // small margin
+            const available = container.clientHeight - used;
+
+            // measure natural height of content
+            // temporarily reset transform to measure
+            content.style.transform = '';
+            content.style.transformOrigin = 'top center';
+            const contentHeight = content.scrollHeight;
+
+            let scale = 1;
+            if(contentHeight > available){
+                scale = available / contentHeight;
+                // clamp to reasonable min
+                scale = Math.max(scale, 0.6);
+            }
+
+            content.style.transform = 'scale(' + scale + ')';
+            // to avoid cutting, set transform origin and ensure container hides overflow
+            content.style.transformOrigin = 'top center';
+            // adjust padding-bottom to maintain spacing for scaled footer
+            content.style.marginBottom = '8px';
+        }
+
+        window.addEventListener('load', fit);
+        window.addEventListener('resize', fit);
+        // run a few times to handle late-loaded fonts/images
+        setTimeout(fit, 300);
+        setTimeout(fit, 800);
+    })();
+</script>
+
+</body></html>

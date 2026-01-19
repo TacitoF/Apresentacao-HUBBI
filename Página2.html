@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+        background-color: #f3f4f6;
+        overflow: hidden;
+    }
+    
+    .slide-container {
+        width: 1280px;
+        height: 720px;
+        background-color: #f8fafc;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    /* Decorative Elements */
+    .top-bar {
+        height: 8px;
+        width: 100%;
+        background-color: #003B73;
+        display: flex;
+    }
+    .top-bar-accent {
+        width: 15%;
+        height: 100%;
+        background-color: #FFCD00;
+    }
+
+    .header {
+        padding: 2.5rem 4rem 1rem 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 1px solid #e2e8f0;
+        background-color: white;
+    }
+
+    .page-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: 2.8rem;
+        color: #003B73;
+        line-height: 1.1;
+        text-transform: uppercase;
+        position: relative;
+    }
+    
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: -1rem; /* Aligns with header border */
+        left: 0;
+        width: 80px;
+        height: 5px;
+        background-color: #FFCD00;
+    }
+
+    .breadcrumb {
+        font-size: 0.9rem;
+        color: #64748b;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Main Content Layout */
+    .content-wrapper {
+        flex: 1;
+        padding: 3rem 4rem;
+        display: flex;
+        gap: 3rem;
+        position: relative;
+    }
+
+    /* Left Column - Hero/Definition */
+    .left-panel {
+        flex: 0 0 38%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-card {
+        background-color: #003B73;
+        color: white;
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .info-card-icon {
+        font-size: 3.5rem;
+        color: #FFCD00;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-card-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    .info-card-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #e2e8f0;
+        margin-bottom: 2rem;
+    }
+
+    .audience-box {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #FFCD00;
+    }
+
+    /* Right Column - Grid of Features */
+    .right-panel {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .feature-item {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        transition: transform 0.2s ease;
+    }
+
+    .feature-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        background-color: #eff6ff;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-icon-wrapper.highlight {
+        background-color: #fefce8;
+    }
+
+    .feature-icon {
+        font-size: 1.25rem;
+        color: #00509d;
+    }
+    
+    .feature-icon.highlight {
+        color: #ca8a04;
+    }
+
+    .feature-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+        font-size: 0.95rem;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    /* Background Shape */
+    .bg-shape {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background-color: #e2e8f0;
+        border-top-left-radius: 100%;
+        opacity: 0.2;
+        z-index: 0;
+        pointer-events: none;
+    }
+</style>
+</head>
+<body>
+<div class="slide-container">
+<!-- Top Decorative Bar -->
+<div class="top-bar">
+<div class="top-bar-accent"></div>
+</div>
+<!-- Header -->
+<div class="header">
+<div>
+<h1 class="page-title">O que é a HubBI?</h1>
+</div>
+<div class="breadcrumb">
+<p><i class="fas fa-layer-group mr-2"></i>Visão Geral da Plataforma</p>
+</div>
+</div>
+<!-- Main Content -->
+<div class="content-wrapper">
+<div class="bg-shape"></div>
+<!-- Left Panel: Definition & Audience -->
+<div class="left-panel" style="z-index: 1;">
+<div class="info-card">
+<i class="fas fa-server info-card-icon"></i>
+<h2 class="info-card-title">Servidor de Relatórios Corporativo</h2>
+<p class="info-card-text">
+                    Plataforma hospedada no <strong>Data Center da ATI</strong> que centraliza o compartilhamento de dados através de um portal proprietário do Estado.
+                </p>
+<div class="audience-box">
+<p class="text-xs uppercase font-bold text-yellow-300 tracking-wider mb-1">Público Alvo</p>
+<p class="font-medium text-white">Instituições do Poder Executivo do Estado de Pernambuco</p>
+</div>
+</div>
+</div>
+<!-- Right Panel: Key Features Grid -->
+<div class="right-panel" style="z-index: 1;">
+<!-- Feature 1 -->
+<div class="feature-item">
+<div class="feature-icon-wrapper">
+<i class="fas fa-chart-line feature-icon"></i>
+</div>
+<h3 class="feature-title">Desenvolvimento de Painéis</h3>
+<p class="feature-desc">Capacidade de criar e customizar relatórios interativos para suporte à decisão governamental.</p>
+</div>
+<!-- Feature 2 -->
+<div class="feature-item">
+<div class="feature-icon-wrapper">
+<i class="fas fa-shield-alt feature-icon"></i>
+</div>
+<h3 class="feature-title">Segurança Gerenciável</h3>
+<p class="feature-desc">Compartilhamento seguro com níveis de acesso definidos hierarquias de usuários.</p>
+</div>
+<!-- Feature 3 (Highlight) -->
+<div class="feature-item border-l-4 border-yellow-400">
+<div class="feature-icon-wrapper highlight">
+<i class="fas fa-unlock-alt feature-icon highlight"></i>
+</div>
+<h3 class="feature-title">Sem Limite de Licença</h3>
+<p class="feature-desc">Grande diferencial que permite consumo ilimitado, eliminando barreiras de custo por usuário para os órgãos.</p>
+</div>
+<!-- Feature 4 -->
+<div class="feature-item">
+<div class="feature-icon-wrapper">
+<i class="fas fa-globe feature-icon"></i>
+</div>
+<h3 class="feature-title">Portal Unificado</h3>
+<p class="feature-desc">Publicação de aplicativos em ambiente web centralizado, acessível e padronizado.</p>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

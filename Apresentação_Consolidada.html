@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> HUBBI</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body{font-family:Inter, Roboto, sans-serif;background:#f3f4f6;margin:0}
+    .topbar{background:#003B73;height:8px}
+    header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:#fff;border-bottom:1px solid #e6edf3}
+    nav a{color:#003B73;margin-right:1rem;font-weight:600;text-decoration:none}
+    /* Centralizar seções: limitar largura e centralizar container (aumentado para leitura) */
+    .container{max-width:1280px;margin:1.5rem auto;padding:1.5rem 2rem}
+    .section{margin-bottom:2rem;background:#fff;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,0.04);overflow:hidden}
+    .section h2{margin:0;padding:1rem 1.25rem;border-bottom:1px solid #eef2f6;background:#fbfcfd;font-family:Montserrat, sans-serif}
+      .frame-wrap{padding:1rem;overflow:hidden}
+     /* For slides sized 1280x720 we scale the iframe to fit the available width
+       and hide any internal scrollbars. JS will compute the scale per iframe. */
+    iframe{width:1280px;height:720px;border:1px solid #e6edf3;border-radius:6px;display:block;transform-origin:0 0;overflow:hidden}
+    .toc{display:flex;gap:0.5rem;align-items:center}
+    /* Botões estilo apresentação: gradiente azul, cantos arredondados (sem borda amarela) */
+    nav a{
+      display:inline-block;
+      padding:0.45rem 0.9rem;
+      border-radius:999px;
+      background:linear-gradient(90deg,#003B73 0%,#0d4b84 100%);
+      color:#fff!important;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(3,60,115,0.12);
+      transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease;
+    }
+    nav a:hover{transform:translateY(-2px);opacity:0.95}
+
+    .btn{display:inline-block;padding:0.5rem 0.9rem;border-radius:999px;background:linear-gradient(90deg,#003B73,#0d4b84);color:#fff;text-decoration:none;font-weight:700}
+
+    /* Header da seção */
+    .section-header{display:flex;align-items:center;justify-content:space-between}
+    /* Presentation overlay */
+    #presentation-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.92);z-index:9999}
+    #presentation-overlay .presentation-stage{position:relative;width:100%;height:100%;overflow:hidden}
+    /* center using absolute positioning + translate; scale will be applied together with translate */
+    #presentation-overlay iframe{position:absolute;left:50%;top:50%;width:1280px;height:720px;border:0;transform-origin:center center;box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+    .presentation-controls{position:absolute;right:2rem;bottom:2rem;display:flex;gap:0.5rem;align-items:center}
+    .presentation-controls button{background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.08);padding:0.6rem 0.8rem;border-radius:6px;font-weight:700;backdrop-filter:blur(4px)}
+    .presentation-indicator{color:#fff;font-weight:700;margin-left:0.5rem}
+    @media (max-width:960px){iframe{height:560px}}
+  </style>
+</head>
+<body>
+  <div class="topbar"></div>
+  <header>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <h1 style="margin:0;font-family:Montserrat, sans-serif;color:#003B73;font-size:1.15rem">Apresentação HUBBI</h1>
+      <nav class="toc">
+        <a href="#p1">Plataforma HubBI</a>
+        <a href="#p2">O que é a HubBI?</a>
+        <a href="#p3">Perfis de Usuário e Funções</a>
+        <a href="#p4">Adesão ao Ambiente HubBI</a>
+        <a href="#p5">Materiais Informativos</a>
+      </nav>
+    </div>
+    <button id="start-presentation" class="btn">Apresentação</button>
+  </header>
+
+  <main class="container">
+    <section id="p1" class="section">
+      <div class="frame-wrap"><iframe src="Página1.html" title="Plataforma HubBI" scrolling="no"></iframe></div>
+    </section>
+
+    <section id="p2" class="section">
+      <div class="frame-wrap"><iframe src="Página2.html" title="O que é a HubBI?" scrolling="no"></iframe></div>
+    </section>
+
+    <section id="p3" class="section">
+      <div class="frame-wrap"><iframe src="Página3.html" title="Perfis de Usuário e Funções" scrolling="no"></iframe></div>
+    </section>
+
+    <section id="p4" class="section">
+      <div class="frame-wrap"><iframe src="Página4.html" title="Adesão ao Ambiente HubBI" scrolling="no"></iframe></div>
+    </section>
+
+    <section id="p5" class="section">
+      <div class="frame-wrap"><iframe src="Página5.html" title="Materiais Informativos" scrolling="no"></iframe></div>
+    </section>
+  </main>
+
+  <!-- Presentation overlay -->
+  <div id="presentation-overlay" aria-hidden="true">
+    <div class="presentation-stage">
+      <div class="presentation-slide" aria-live="polite"></div>
+      <div class="presentation-controls">
+        <button id="prev-slide">◀</button>
+        <button id="play-pause">Play</button>
+        <button id="next-slide">▶</button>
+        <span class="presentation-indicator" id="slide-indicator">0 / 0</span>
+        <button id="exit-presentation">Sair</button>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <script>
+    (function(){
+      const ORIGINAL_W = 1280;
+      const ORIGINAL_H = 720;
+
+      function getHorizontalPadding(el){
+        const s = getComputedStyle(el);
+        return parseFloat(s.paddingLeft || 0) + parseFloat(s.paddingRight || 0);
+      }
+
+      function fitIframe(frameWrap){
+        const iframe = frameWrap.querySelector('iframe');
+        if(!iframe) return;
+        try{ iframe.style.overflow = 'hidden'; iframe.setAttribute('scrolling','no'); }catch(e){}
+        const wrapWidth = frameWrap.clientWidth - getHorizontalPadding(frameWrap);
+        const scale = Math.min(1, wrapWidth / ORIGINAL_W);
+        // try to read the document height (works when same-origin)
+        try{
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          const docH = Math.max(doc.body.scrollHeight || 0, doc.documentElement.scrollHeight || 0);
+          iframe.style.height = (docH || ORIGINAL_H) + 'px';
+          iframe.style.transform = 'scale(' + scale + ')';
+          frameWrap.style.height = ((docH || ORIGINAL_H) * scale) + 'px';
+        }catch(e){
+          // cross-origin or inaccessible: fall back to original fixed height
+          iframe.style.height = ORIGINAL_H + 'px';
+          iframe.style.transform = 'scale(' + scale + ')';
+          frameWrap.style.height = (ORIGINAL_H * scale) + 'px';
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', ()=>{
+        const frameWraps = document.querySelectorAll('.frame-wrap');
+        frameWraps.forEach(fitIframe);
+        window.addEventListener('resize', ()=>{ frameWraps.forEach(fitIframe); });
+      });
+    })();
+    // Presentation mode: fullscreen, navigation and autoplay
+    (function(){
+      const ORIGINAL_W = 1280, ORIGINAL_H = 720;
+      const slides = Array.from(document.querySelectorAll('.frame-wrap iframe')).map(f=>f.getAttribute('src'));
+      let current = 0, playing = false, autoplayInterval = null, resizeHandler = null;
+      const overlay = document.getElementById('presentation-overlay');
+      const stage = overlay && overlay.querySelector('.presentation-slide');
+      const indicator = document.getElementById('slide-indicator');
+
+      function updateIndicator(){ if(indicator) indicator.textContent = (current+1) + ' / ' + slides.length; }
+
+      function fitPresentation(iframe){
+        const w = window.innerWidth, h = window.innerHeight;
+        const scale = Math.min(w / ORIGINAL_W, h / ORIGINAL_H);
+        // translate(-50%,-50%) centers the iframe, then scale
+        iframe.style.transform = 'translate(-50%,-50%) scale(' + scale + ')';
+      }
+
+      function createSlide(index){
+        if(!stage) return;
+        stage.innerHTML = '';
+        const ifr = document.createElement('iframe');
+        ifr.src = slides[index];
+        ifr.setAttribute('scrolling','no');
+        ifr.style.width = ORIGINAL_W + 'px';
+        ifr.style.height = ORIGINAL_H + 'px';
+        ifr.style.border = '0';
+        ifr.style.display = 'block';
+        ifr.style.position = 'absolute';
+        ifr.style.left = '50%';
+        ifr.style.top = '50%';
+        ifr.style.transformOrigin = 'center center';
+        stage.appendChild(ifr);
+        // fit right away and on resize
+        fitPresentation(ifr);
+        if(resizeHandler) window.removeEventListener('resize', resizeHandler);
+        resizeHandler = ()=>fitPresentation(ifr);
+        window.addEventListener('resize', resizeHandler);
+      }
+
+      function openPresentation(startIndex){
+        current = startIndex || 0;
+        if(!overlay) return;
+        overlay.style.display = 'flex'; overlay.setAttribute('aria-hidden','false');
+        createSlide(current); updateIndicator();
+        // try fullscreen
+        try{ overlay.requestFullscreen && overlay.requestFullscreen(); }catch(e){}
+      }
+
+      function closePresentation(){
+        if(!overlay) return;
+        overlay.style.display = 'none'; overlay.setAttribute('aria-hidden','true');
+        stage.innerHTML = '';
+        if(resizeHandler) window.removeEventListener('resize', resizeHandler);
+        if(autoplayInterval){ clearInterval(autoplayInterval); autoplayInterval = null; playing = false; document.getElementById('play-pause').textContent = 'Play'; }
+        try{ document.exitFullscreen && document.exitFullscreen(); }catch(e){}
+      }
+
+      function nextSlide(){ current = (current + 1) % slides.length; createSlide(current); updateIndicator(); }
+      function prevSlide(){ current = (current - 1 + slides.length) % slides.length; createSlide(current); updateIndicator(); }
+
+      function togglePlay(){
+        const btn = document.getElementById('play-pause');
+        if(playing){ clearInterval(autoplayInterval); autoplayInterval = null; playing = false; if(btn) btn.textContent = 'Play'; }
+        else { playing = true; if(btn) btn.textContent = 'Pause'; autoplayInterval = setInterval(nextSlide, 6000); }
+      }
+
+      // attach controls
+      document.getElementById('start-presentation')?.addEventListener('click', (e)=>{ e.preventDefault(); openPresentation(0); });
+      document.getElementById('exit-presentation')?.addEventListener('click', closePresentation);
+      document.getElementById('next-slide')?.addEventListener('click', nextSlide);
+      document.getElementById('prev-slide')?.addEventListener('click', prevSlide);
+      document.getElementById('play-pause')?.addEventListener('click', togglePlay);
+
+      // keyboard navigation
+      window.addEventListener('keydown', (e)=>{
+        if(overlay && overlay.style.display === 'flex'){
+          if(e.key === 'ArrowRight') { e.preventDefault(); nextSlide(); }
+          else if(e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+          else if(e.key === 'Escape') { e.preventDefault(); closePresentation(); }
+          else if(e.key === ' '){ e.preventDefault(); togglePlay(); }
+        }
+      });
+
+      // update indicator initial
+      updateIndicator();
+
+      // handle exiting fullscreen via Esc or browser controls: close modal when fullscreen is left
+      function onFullScreenChange(){
+        const fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+        // if no fullscreen element and overlay is visible, close presentation
+        if(!fs){
+          const ov = document.getElementById('presentation-overlay');
+          if(ov && ov.style.display === 'flex') closePresentation();
+        }
+      }
+
+      document.addEventListener('fullscreenchange', onFullScreenChange);
+      document.addEventListener('webkitfullscreenchange', onFullScreenChange);
+      document.addEventListener('mozfullscreenchange', onFullScreenChange);
+      document.addEventListener('MSFullscreenChange', onFullScreenChange);
+    })();
+  </script>
+</body>
+</html>
